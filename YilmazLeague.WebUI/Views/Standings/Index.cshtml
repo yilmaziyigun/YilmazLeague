@@ -1,0 +1,175 @@
+﻿@model List<YilmazLeague.WebUI.Dtos.StandingDto>
+@{
+    ViewData["Title"] = "Puan Durumu";
+    var standings = Model ?? new List<YilmazLeague.WebUI.Dtos.StandingDto>();
+    var leader = standings.FirstOrDefault();
+    var topScoring = standings.OrderByDescending(x => x.GoalsFor).FirstOrDefault();
+    var bestDefense = standings.Where(x => x.Played > 0).OrderBy(x => x.GoalsAgainst).FirstOrDefault();
+}
+
+@section Styles {
+<style>
+:root{--bg:#080d18;--bg2:#0c1220;--card:#111827;--card2:#16202f;--elevated:#1c2d42;--green:#00e676;--blue:#2979ff;--live:#ff1744;--gold:#ffd600;--yellow:#ffc107;--t1:#eef2ff;--t2:#7b96c4;--t3:#3d5478;--border:#1a2640;--r1:8px;--r2:12px;--r3:16px;--tr:all .22s cubic-bezier(.4,0,.2,1);--fd:'Barlow Condensed',sans-serif;--fb:'Barlow',sans-serif}
+body{font-family:var(--fb);background:var(--bg);color:var(--t1);min-height:100vh;background-image:radial-gradient(ellipse at 15% 0%,rgba(41,121,255,.07) 0%,transparent 55%),radial-gradient(ellipse at 85% 0%,rgba(0,230,118,.04) 0%,transparent 50%)}
+a{text-decoration:none;color:inherit}a:hover{color:inherit}.wrap{max-width:1120px;margin:0 auto;padding:0 20px}.nb{background:rgba(8,13,24,.96);backdrop-filter:blur(20px);border-bottom:1px solid var(--border);position:sticky;top:0;z-index:1000;box-shadow:0 2px 24px rgba(0,0,0,.5)}.nb-inner{max-width:1120px;margin:0 auto;padding:0 20px;display:flex;align-items:center;justify-content:space-between;gap:16px}.brand{display:flex;align-items:center;gap:10px;padding:14px 0}.brand-ico{width:34px;height:34px;background:linear-gradient(135deg,var(--green),var(--blue));border-radius:7px;display:flex;align-items:center;justify-content:center;font-size:17px}.brand-txt{font-family:var(--fd);font-size:21px;font-weight:800;letter-spacing:1px}.brand-txt span{color:var(--green)}.nav-links{display:flex}.nl{font-family:var(--fd);font-size:12px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;color:var(--t2);padding:22px 15px;position:relative;transition:var(--tr)}.nl::after{content:'';position:absolute;bottom:0;left:15px;right:15px;height:2px;background:var(--green);transform:scaleX(0);transition:var(--tr)}.nl:hover,.nl.active{color:var(--t1)}.nl:hover::after,.nl.active::after{transform:scaleX(1)}.ico-btn,.tog{width:36px;height:36px;background:var(--card);border:1px solid var(--border);border-radius:var(--r1);color:var(--t2);display:flex;align-items:center;justify-content:center;font-size:14px;transition:var(--tr)}.mob-menu{max-height:0;overflow:hidden;transition:max-height .3s ease}.mob-menu.open{max-height:300px}.mob-menu .nl{padding:14px 0;border-bottom:1px solid var(--border);display:block}
+.pg-head{background:linear-gradient(135deg,var(--bg2),var(--card));border-bottom:1px solid var(--border);padding:32px 0 24px;position:relative;overflow:hidden}.pg-badge{display:inline-flex;align-items:center;gap:7px;background:rgba(255,214,0,.09);border:1px solid rgba(255,214,0,.22);border-radius:20px;padding:4px 12px;font-family:var(--fd);font-size:11px;font-weight:700;letter-spacing:1px;color:var(--gold);text-transform:uppercase;margin-bottom:10px}.pg-title{font-family:var(--fd);font-size:clamp(28px,5vw,46px);font-weight:900;letter-spacing:.5px;line-height:1}.pg-sub{font-size:13px;color:var(--t2);margin-top:6px}.legend{display:flex;align-items:center;gap:6px;flex-wrap:wrap}.leg-item{display:flex;align-items:center;gap:6px;font-size:11px;color:var(--t2);background:var(--card);border:1px solid var(--border);padding:5px 10px;border-radius:7px}.leg-dot{width:8px;height:8px;border-radius:2px;flex-shrink:0}
+.tbl-wrap{padding:28px 0 56px}.top-stats{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-bottom:24px}.ts-card{background:var(--card);border:1px solid var(--border);border-radius:var(--r2);padding:18px;display:flex;flex-direction:column;gap:4px}.ts-label{font-family:var(--fd);font-size:10px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;color:var(--t3)}.ts-val{font-family:var(--fd);font-size:28px;font-weight:900;line-height:1}.ts-team{font-size:12px;color:var(--t2);margin-top:2px}.table-shell{overflow-x:auto;border-radius:var(--r3);border:1px solid var(--border)}.std-table{width:100%;border-collapse:separate;border-spacing:0 4px;min-width:720px}.std-table thead th{font-family:var(--fd);font-size:10px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;color:var(--t3);padding:8px 10px;text-align:center;border:none}.std-table thead th.team-col{text-align:left}.std-row{background:var(--card);transition:var(--tr)}.std-row:hover{background:var(--card2);transform:translateX(3px)}.std-row td{padding:11px 10px;text-align:center;border:none;vertical-align:middle}.pos-strip{width:4px;height:42px;border-radius:2px 0 0 2px;flex-shrink:0}.cl-top{background:var(--gold)}.cl-euro{background:var(--green)}.cl-rel{background:var(--live)}.cl-none{background:transparent}.pos-num{font-family:var(--fd);font-size:16px;font-weight:800;color:var(--t2);width:38px;text-align:center}.top1{color:var(--gold)}.top4{color:var(--green)}.rel{color:var(--live)}.team-cell{display:flex;align-items:center;gap:10px;text-align:left;min-width:160px}.t-logo{width:28px;height:28px;border-radius:50%;background:var(--elevated);border:1px solid var(--border);display:flex;align-items:center;justify-content:center;font-family:var(--fd);font-size:9px;font-weight:800;color:var(--t2);overflow:hidden;flex-shrink:0}.t-logo img{width:100%;height:100%;object-fit:contain;padding:3px}.t-name{font-family:var(--fd);font-size:15px;font-weight:700}.s-mp,.s-gf,.s-ga{font-family:var(--fd);font-size:14px;font-weight:600;color:var(--t2)}.s-w{font-family:var(--fd);font-size:14px;font-weight:700;color:var(--green)}.s-d{font-family:var(--fd);font-size:14px;font-weight:700;color:var(--t2)}.s-l{font-family:var(--fd);font-size:14px;font-weight:700;color:var(--live)}.s-gd{font-family:var(--fd);font-size:14px;font-weight:700}.s-gd.pos{color:var(--green)}.s-gd.neg{color:var(--live)}.s-gd.zero{color:var(--t3)}.s-pts{font-family:var(--fd);font-size:18px;font-weight:900;color:var(--t1)}.pts-top{color:var(--gold)!important}.empty-state{background:var(--card);border:1px solid var(--border);border-radius:var(--r3);padding:48px;text-align:center;color:var(--t2)}.ft{background:var(--bg2);border-top:1px solid var(--border);padding:32px 0;margin-top:0}.ft-brand{font-family:var(--fd);font-size:20px;font-weight:800}.ft-brand span{color:var(--green)}.ft-bot{font-size:11px;color:var(--t3);display:flex;justify-content:space-between;flex-wrap:wrap;gap:6px;margin-top:12px}
+@@media(max-width:900px){.top-stats{grid-template-columns:repeat(2,1fr)}.hide-md{display:none!important}}@@media(max-width:600px){.top-stats{grid-template-columns:repeat(2,1fr);gap:8px}.ts-val{font-size:22px}.pos-num{width:28px;font-size:14px}.team-cell{min-width:120px;gap:7px}.t-logo{width:22px;height:22px}.hide-sm{display:none!important}}
+</style>
+}
+
+<nav class="nb">
+  <div class="nb-inner">
+    <a asp-controller="Matches" asp-action="Index" class="brand"><img src="~/images/yilmazleaguelogo.png" asp-append-version="true" alt="YilmazLeague" class="brand-logo" /></a>
+    <div class="nav-links d-none d-lg-flex">
+      <a asp-controller="Matches" asp-action="Index" class="nl">Ana Sayfa</a>
+      <a href="#" class="nl">Canlı Skorlar</a>
+      <a asp-controller="Fixtures" asp-action="Index" class="nl">Fikstür</a>
+      <a asp-controller="Standings" asp-action="Index" class="nl active">Puan Durumu</a>
+      @if (Context.Session.GetString("IsAdmin") == "true") { <a asp-controller="Admin" asp-action="Index" class="nl">Admin</a> }
+    </div>
+    <div class="d-flex align-items-center gap-2">
+      <a href="#" class="ico-btn d-none d-sm-flex"><i class="bi bi-search"></i></a>
+      <a href="#" class="ico-btn"><i class="bi bi-person"></i></a>
+      <button class="tog d-lg-none" id="tog" type="button"><i class="bi bi-list"></i></button>
+    </div>
+  </div>
+  <div class="mob-menu" id="mobMenu">
+    <div class="wrap">
+      <a asp-controller="Matches" asp-action="Index" class="nl d-block">Ana Sayfa</a>
+      <a href="#" class="nl d-block">Canlı Skorlar</a>
+      <a asp-controller="Fixtures" asp-action="Index" class="nl d-block">Fikstür</a>
+      <a asp-controller="Standings" asp-action="Index" class="nl d-block active">Puan Durumu</a>
+      @if (Context.Session.GetString("IsAdmin") == "true") { <a asp-controller="Admin" asp-action="Index" class="nl d-block">Admin</a> }
+    </div>
+  </div>
+</nav>
+
+<section class="pg-head">
+  <div class="wrap">
+    <div class="row align-items-center">
+      <div class="col-lg-8">
+        <div class="pg-badge"><i class="bi bi-trophy-fill"></i> Süper Lig</div>
+        <h1 class="pg-title">Puan <span style="color:var(--green)">Durumu</span></h1>
+        <p class="pg-sub">Tamamlanan maçlara göre otomatik hesaplanır</p>
+      </div>
+      <div class="col-lg-4 mt-3 mt-lg-0">
+        <div class="legend">
+          <div class="leg-item"><div class="leg-dot" style="background:var(--gold)"></div>Lider</div>
+          <div class="leg-item"><div class="leg-dot" style="background:var(--green)"></div>Üst Sıra</div>
+          <div class="leg-item"><div class="leg-dot" style="background:var(--live)"></div>Alt Sıra</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<main>
+<div class="wrap">
+<div class="tbl-wrap">
+  <div class="top-stats">
+    <div class="ts-card">
+      <div class="ts-label">Lider Takım</div>
+      <div class="ts-val" style="color:var(--gold)">@(leader?.TeamName ?? "-")</div>
+      <div class="ts-team">@(leader != null ? $"{leader.Points} puan" : "Henüz veri yok")</div>
+    </div>
+    <div class="ts-card">
+      <div class="ts-label">En Çok Gol</div>
+      <div class="ts-val" style="color:var(--green)">@(topScoring?.GoalsFor ?? 0)</div>
+      <div class="ts-team">@(topScoring?.TeamName ?? "-")</div>
+    </div>
+    <div class="ts-card">
+      <div class="ts-label">En Az Yiyen</div>
+      <div class="ts-val" style="color:var(--blue)">@(bestDefense?.GoalsAgainst ?? 0)</div>
+      <div class="ts-team">@(bestDefense?.TeamName ?? "-")</div>
+    </div>
+    <div class="ts-card">
+      <div class="ts-label">Takım Sayısı</div>
+      <div class="ts-val" style="color:var(--t1)">@standings.Count</div>
+      <div class="ts-team">Lig tablosunda</div>
+    </div>
+  </div>
+
+  @if (!standings.Any())
+  {
+    <div class="empty-state">Henüz puan durumu verisi yok.</div>
+  }
+  else
+  {
+    <div class="table-shell">
+      <table class="std-table">
+        <thead>
+          <tr>
+            <th style="width:4px;padding:0"></th>
+            <th style="width:44px">#</th>
+            <th class="team-col">Takım</th>
+            <th>O</th>
+            <th>G</th>
+            <th>B</th>
+            <th>M</th>
+            <th class="hide-sm">AG</th>
+            <th class="hide-sm">YG</th>
+            <th>AV</th>
+            <th>P</th>
+          </tr>
+        </thead>
+        <tbody>
+          @for (var i = 0; i < standings.Count; i++)
+          {
+              var team = standings[i];
+              var position = i + 1;
+              var gdClass = team.GoalDifference > 0 ? "pos" : team.GoalDifference < 0 ? "neg" : "zero";
+              var gdText = team.GoalDifference > 0 ? "+" + team.GoalDifference : team.GoalDifference.ToString();
+              var stripClass = position == 1 ? "cl-top" : position <= 4 ? "cl-euro" : position > Math.Max(standings.Count - 3, 0) ? "cl-rel" : "cl-none";
+              var posClass = position == 1 ? "top1" : position <= 4 ? "top4" : position > Math.Max(standings.Count - 3, 0) ? "rel" : "";
+            <tr class="std-row">
+              <td style="padding:0;width:4px"><div class="pos-strip @stripClass"></div></td>
+              <td><span class="pos-num @posClass">@position</span></td>
+              <td>
+                <div class="team-cell">
+                  <div class="t-logo"><img src="@team.LogoUrl" alt="@team.TeamName" onerror="this.style.display='none'" /></div>
+                  <div class="t-name">@team.TeamName</div>
+                </div>
+              </td>
+              <td class="s-mp">@team.Played</td>
+              <td class="s-w">@team.Wins</td>
+              <td class="s-d">@team.Draws</td>
+              <td class="s-l">@team.Losses</td>
+              <td class="s-gf hide-sm">@team.GoalsFor</td>
+              <td class="s-ga hide-sm">@team.GoalsAgainst</td>
+              <td class="s-gd @gdClass">@gdText</td>
+              <td class="s-pts @(position == 1 ? "pts-top" : "")">@team.Points</td>
+            </tr>
+          }
+        </tbody>
+      </table>
+    </div>
+  }
+</div>
+</div>
+</main>
+
+<footer class="ft">
+  <div class="wrap">
+    <div class="ft-brand">Yilmaz<span>League</span></div>
+    <div class="ft-bot">
+      <span>© @DateTime.Now.Year YilmazLeague. Tüm hakları saklıdır.</span>
+      <span>Puanlar maç sonuçlarından hesaplanır.</span>
+    </div>
+  </div>
+</footer>
+
+@section Scripts {
+<script>
+const tog = document.getElementById('tog');
+const mob = document.getElementById('mobMenu');
+if (tog && mob) {
+  tog.addEventListener('click', () => {
+    mob.classList.toggle('open');
+    tog.innerHTML = mob.classList.contains('open') ? '<i class="bi bi-x-lg"></i>' : '<i class="bi bi-list"></i>';
+  });
+}
+</script>
+}
+
+

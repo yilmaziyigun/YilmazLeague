@@ -1,0 +1,208 @@
+﻿@model YilmazLeague.WebUI.ViewModels.AdminDashboardViewModel
+@using System.Text.Json
+@{
+    ViewData["Title"] = "Admin Panel";
+    var teams = Model.Teams;
+    var players = Model.Players;
+    var matches = Model.Matches;
+    var seasons = Model.Seasons;
+    var activeSeason = seasons.FirstOrDefault(x => x.IsActive) ?? seasons.OrderByDescending(x => x.SeasonId).FirstOrDefault();
+    var selectedSeasonId = activeSeason?.SeasonId ?? 4;
+    var selectedWeek = matches.Where(x => x.SeasonId == selectedSeasonId && (x.Status == "Canlı" || x.Status == "Tamamlandı")).Select(x => x.WeekNumber).DefaultIfEmpty(34).Max();
+    var jsonOptions = new JsonSerializerOptions { PropertyNamingPolicy = null };
+}
+
+@section Styles {
+<style>
+:root{--bg:#080d18;--bg2:#0c1220;--card:#111827;--card2:#16202f;--elevated:#1c2d42;--green:#00e676;--blue:#2979ff;--live:#ff1744;--gold:#ffd600;--yellow:#ffc107;--t1:#eef2ff;--t2:#7b96c4;--t3:#3d5478;--border:#1a2640;--r1:8px;--r2:12px;--r3:16px;--fd:'Barlow Condensed',sans-serif;--fb:'Barlow',sans-serif}body{font-family:var(--fb);background:var(--bg);color:var(--t1);min-height:100vh;background-image:radial-gradient(ellipse at 15% 0%,rgba(41,121,255,.07) 0%,transparent 55%),radial-gradient(ellipse at 85% 0%,rgba(0,230,118,.04) 0%,transparent 50%)}a{text-decoration:none;color:inherit}.wrap{max-width:1120px;margin:0 auto;padding:0 20px}.nb{background:rgba(8,13,24,.96);backdrop-filter:blur(20px);border-bottom:1px solid var(--border);position:sticky;top:0;z-index:1000}.nb-inner{max-width:1120px;margin:0 auto;padding:0 20px;display:flex;align-items:center;justify-content:space-between}.brand{display:flex;align-items:center;gap:10px;padding:14px 0}.brand-ico{width:34px;height:34px;background:linear-gradient(135deg,var(--green),var(--blue));border-radius:7px;display:flex;align-items:center;justify-content:center}.brand-txt{font-family:var(--fd);font-size:21px;font-weight:800}.brand-txt span{color:var(--green)}.nav-links{display:flex}.nl{font-family:var(--fd);font-size:12px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;color:var(--t2);padding:22px 15px;position:relative}.nl::after{content:'';position:absolute;bottom:0;left:15px;right:15px;height:2px;background:var(--green);transform:scaleX(0);transition:.2s}.nl:hover,.nl.active{color:var(--t1)}.nl:hover::after,.nl.active::after{transform:scaleX(1)}.pg-head{background:linear-gradient(135deg,var(--bg2),var(--card));border-bottom:1px solid var(--border);padding:32px 0 24px}.pg-badge{display:inline-flex;align-items:center;gap:7px;background:rgba(255,214,0,.09);border:1px solid rgba(255,214,0,.22);border-radius:20px;padding:4px 12px;font-family:var(--fd);font-size:11px;font-weight:700;letter-spacing:1px;color:var(--gold);text-transform:uppercase;margin-bottom:10px}.pg-title{font-family:var(--fd);font-size:clamp(28px,5vw,46px);font-weight:900}.pg-sub{font-size:13px;color:var(--t2)}.content{padding:28px 0 56px}.stats{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-bottom:16px}.stat{background:var(--card);border:1px solid var(--border);border-radius:var(--r2);padding:14px;text-align:center}.stat-num{font-family:var(--fd);font-size:28px;font-weight:900}.stat-label{font-size:11px;color:var(--t3);text-transform:uppercase;letter-spacing:1px}.admin-grid{display:grid;grid-template-columns:1fr 1fr;gap:16px}.panel{background:var(--card);border:1px solid var(--border);border-radius:var(--r3);padding:20px}.panel.wide{grid-column:1/-1}.panel-title{font-family:var(--fd);font-size:13px;font-weight:800;letter-spacing:1.5px;text-transform:uppercase;color:var(--t2);margin-bottom:14px;display:flex;align-items:center;gap:8px}.form-control,.form-select{background:var(--bg2);border:1px solid var(--border);color:var(--t1);border-radius:var(--r1)}.form-control:focus,.form-select:focus{background:var(--bg2);color:var(--t1);border-color:var(--blue);box-shadow:none}.form-select option{background:#111827;color:#eef2ff}.form-label{font-size:12px;color:var(--t2)}.btn-main{background:rgba(41,121,255,.16);border:1px solid rgba(41,121,255,.35);color:var(--blue);border-radius:var(--r1);font-family:var(--fd);font-weight:800;letter-spacing:1px;text-transform:uppercase;padding:8px 14px}.btn-main:hover{background:rgba(41,121,255,.25);color:var(--t1)}.hint{font-size:12px;color:var(--t3);margin-top:8px}.alert-ok{background:rgba(0,230,118,.08);border:1px solid rgba(0,230,118,.2);color:var(--green);border-radius:var(--r2);padding:10px 14px;margin-bottom:16px}.alert-error{background:rgba(255,23,68,.08);border:1px solid rgba(255,23,68,.25);color:var(--live);border-radius:var(--r2);padding:10px 14px;margin-bottom:16px}.empty-note{background:rgba(255,214,0,.08);border:1px solid rgba(255,214,0,.2);color:var(--gold);border-radius:var(--r2);padding:10px 12px;font-size:12px;margin-top:12px}.status-live{color:var(--live)}.ft{background:var(--bg2);border-top:1px solid var(--border);padding:32px 0}.ft-brand{font-family:var(--fd);font-size:20px;font-weight:800}.ft-brand span{color:var(--green)}@@media(max-width:900px){.admin-grid,.stats{grid-template-columns:1fr}.panel.wide{grid-column:auto}.nav-links{display:none!important}}
+</style>
+}
+
+<nav class="nb"><div class="nb-inner"><a asp-controller="Matches" asp-action="Index" class="brand"><img src="~/images/yilmazleaguelogo.png" asp-append-version="true" alt="YilmazLeague" class="brand-logo" /></a><div class="nav-links d-none d-lg-flex"><a asp-controller="Matches" asp-action="Index" class="nl">Ana Sayfa</a><a asp-controller="Live" asp-action="Index" class="nl">Canlı Skorlar</a><a asp-controller="Fixtures" asp-action="Index" class="nl">Fikstür</a><a asp-controller="Standings" asp-action="Index" class="nl">Puan Durumu</a><a asp-controller="Admin" asp-action="Index" class="nl active">Admin</a><a asp-controller="Admin" asp-action="Logout" class="nl">Çıkış</a></div></div></nav>
+<section class="pg-head"><div class="wrap"><div class="pg-badge"><i class="bi bi-shield-lock"></i> Yönetim</div><h1 class="pg-title">Maç <span style="color:var(--green)">Yönetimi</span></h1><p class="pg-sub">Sadece maç oluşturma, skor girme ve maç olayı ekleme</p></div></section>
+
+<main><div class="wrap"><div class="content">
+@if (TempData["Success"] != null){<div class="alert-ok">@TempData["Success"]</div>}@if (TempData["Error"] != null){<div class="alert-error">@TempData["Error"]</div>}
+<div class="stats"><div class="stat"><div class="stat-num" style="color:var(--green)">@matches.Count(x => x.Status == "Tamamlandı")</div><div class="stat-label">Tamamlanan Maç</div></div><div class="stat"><div class="stat-num" style="color:var(--live)">@matches.Count(x => x.Status == "Canlı")</div><div class="stat-label">Canlı Maç</div></div><div class="stat"><div class="stat-num" style="color:var(--gold)">@matches.Count(x => x.Status == "Planlandı")</div><div class="stat-label">Planlanan Maç</div></div></div>
+
+<div class="admin-grid">
+    <div class="panel">
+        <div class="panel-title"><i class="bi bi-calendar-plus"></i> Maç Oluştur</div>
+        <form asp-action="CreateMatch" method="post">
+            <div class="row g-3">
+                <div class="col-md-6"><label class="form-label">Sezon</label><select name="SeasonId" class="form-select" required>@foreach(var season in seasons){<option value="@season.SeasonId" selected="@(season.SeasonId == selectedSeasonId)">@season.Name</option>}</select></div>
+                <div class="col-md-6"><label class="form-label">Hafta</label><input name="WeekNumber" type="number" class="form-control" min="1" max="38" value="@(selectedWeek + 1 > 38 ? selectedWeek : selectedWeek + 1)" required /></div>
+                <div class="col-md-6"><label class="form-label">Ev Sahibi</label><select name="HomeTeamId" class="form-select" required>@foreach(var team in teams){<option value="@team.TeamId">@team.Name</option>}</select></div>
+                <div class="col-md-6"><label class="form-label">Deplasman</label><select name="AwayTeamId" class="form-select" required>@foreach(var team in teams){<option value="@team.TeamId">@team.Name</option>}</select></div>
+                <div class="col-12"><label class="form-label">Maç Tarihi</label><input name="MatchDate" type="datetime-local" class="form-control" required /></div>
+            </div>
+            <button class="btn-main mt-3" type="submit">Maçı Oluştur</button>
+            <div class="hint">Oluşturulan maç varsayılan olarak Planlandı durumunda kaydedilir.</div>
+        </form>
+    </div>
+
+    <div class="panel">
+        <div class="panel-title"><i class="bi bi-pencil-square"></i> Skor Gir</div>
+        <form asp-action="UpdateScore" method="post">
+            <div class="row g-3">
+                <div class="col-md-6"><label class="form-label">Sezon</label><select id="scoreSeason" class="form-select"></select></div>
+                <div class="col-md-6"><label class="form-label">Hafta</label><select id="scoreWeek" class="form-select"></select></div>
+                <div class="col-12"><label class="form-label">Maç</label><select id="scoreMatch" name="matchId" class="form-select" required></select><div id="scoreEmpty" class="empty-note d-none">Bu seçim için maç bulunamadı.</div></div>
+                <div class="col-md-6"><label class="form-label">Ev Skoru</label><input name="HomeScore" type="number" class="form-control" min="0" required /></div>
+                <div class="col-md-6"><label class="form-label">Dep. Skoru</label><input name="AwayScore" type="number" class="form-control" min="0" required /></div>
+            </div>
+            <button class="btn-main mt-3" type="submit">Skoru Kaydet</button>
+            <div class="hint">Skor kaydedilince maç Tamamlandı olur.</div>
+        </form>
+    </div>
+
+    <div class="panel wide">
+        <div class="panel-title"><i class="bi bi-lightning-charge-fill"></i> Maç Olayı Ekle</div>
+        <form asp-action="CreateEvent" method="post">
+            <div class="row g-3">
+                <div class="col-md-3"><label class="form-label">Maç Durumu</label><select id="eventStatus" class="form-select"><option value="Canlı">Canlı Maç</option><option value="Tamamlandı">Biten Maç</option></select></div>
+                <div class="col-md-3"><label class="form-label">Sezon</label><select id="eventSeason" class="form-select"></select></div>
+                <div class="col-md-2"><label class="form-label">Hafta</label><select id="eventWeek" class="form-select"></select></div>
+                <div class="col-md-4"><label class="form-label">Maç</label><select id="eventMatch" name="LeagueMatchId" class="form-select" required></select><div id="eventEmpty" class="empty-note d-none">Bu filtrelerde maç bulunamadı.</div></div>
+
+                <div class="col-md-4"><label class="form-label">Takım</label><select id="eventTeam" name="TeamId" class="form-select" required></select></div>
+                <div class="col-md-4" id="eventPlayerWrap"><label class="form-label">Oyuncu</label><select id="eventPlayer" name="PlayerId" class="form-select"><option value="">Seçme</option></select></div>
+                <div class="col-md-2"><label class="form-label">Dakika</label><input name="Minute" type="number" class="form-control" min="1" max="130" required /></div>
+                <div class="col-md-2"><label class="form-label">Olay Tipi</label><select id="eventType" name="EventType" class="form-select" required><option>Gol</option><option>Sarı Kart</option><option>Kırmızı Kart</option><option>Oyuncu Değişikliği</option></select></div>
+
+                <div class="col-md-6 sub-fields d-none"><label class="form-label">Giren Oyuncu</label><select id="playerIn" name="PlayerInId" class="form-select"><option value="">Seçme</option></select></div>
+                <div class="col-md-6 sub-fields d-none"><label class="form-label">Çıkan Oyuncu</label><select id="playerOut" name="PlayerOutId" class="form-select"><option value="">Seçme</option></select></div>
+                <div class="col-12"><label class="form-label">Açıklama</label><input name="Description" class="form-control" placeholder="Örn: Ceza sahası içinden gol" /></div>
+            </div>
+            <button class="btn-main mt-3" type="submit">Olayı Kaydet</button>
+            <div class="hint">Oyuncu listesi sadece seçilen maçtaki ev sahibi/deplasman takımına göre daraltılır.</div>
+        </form>
+    </div>
+</div>
+</div></div></main>
+<footer class="ft"><div class="wrap"><div class="ft-brand">Yilmaz<span>League</span></div></div></footer>
+
+@section Scripts{
+<script>
+const teams = @Html.Raw(JsonSerializer.Serialize(teams, jsonOptions));
+const players = @Html.Raw(JsonSerializer.Serialize(players, jsonOptions));
+const matches = @Html.Raw(JsonSerializer.Serialize(matches, jsonOptions));
+const seasons = @Html.Raw(JsonSerializer.Serialize(seasons, jsonOptions));
+const defaultSeasonId = @selectedSeasonId;
+const defaultWeek = @selectedWeek;
+
+const text = value => value ?? '';
+const byId = id => document.getElementById(id);
+const weekNumbers = Array.from(new Set(matches.map(m => m.WeekNumber))).sort((a,b) => a-b);
+const allWeeks = weekNumbers.length ? weekNumbers : Array.from({length:38}, (_,i) => i + 1);
+
+function fillSeasonSelect(select, selectedId){
+    select.innerHTML = seasons.map(s => `<option value="${s.SeasonId}" ${s.SeasonId === selectedId ? 'selected' : ''}>${s.Name}</option>`).join('');
+}
+
+function fillWeekSelect(select, selectedWeek){
+    select.innerHTML = allWeeks.map(w => `<option value="${w}" ${w === selectedWeek ? 'selected' : ''}>${w}. Hafta</option>`).join('');
+}
+
+function matchLabel(match){
+    const score = match.HomeScore !== null && match.AwayScore !== null ? ` ${match.HomeScore}-${match.AwayScore}` : '';
+    const minute = match.Status === 'Canlı' && match.LiveMinute ? ` ${match.LiveMinute}'` : '';
+    return `${match.HomeTeamName} - ${match.AwayTeamName}${score} (${match.Status}${minute})`;
+}
+
+function filterMatches(seasonId, week, status){
+    return matches
+        .filter(m => m.SeasonId === seasonId && m.WeekNumber === week && (!status || m.Status === status))
+        .sort((a,b) => new Date(a.MatchDate) - new Date(b.MatchDate));
+}
+
+function fillMatchSelect(select, list, emptyElement){
+    select.innerHTML = list.map(m => `<option value="${m.LeagueMatchId}">${matchLabel(m)}</option>`).join('');
+    select.disabled = list.length === 0;
+    emptyElement.classList.toggle('d-none', list.length > 0);
+}
+
+function selectedMatch(select){
+    const id = Number(select.value);
+    return matches.find(m => m.LeagueMatchId === id);
+}
+
+function fillTeamSelect(match){
+    const eventTeam = byId('eventTeam');
+    if (!match) {
+        eventTeam.innerHTML = '';
+        eventTeam.disabled = true;
+        fillPlayerSelect(null);
+        return;
+    }
+
+    eventTeam.disabled = false;
+    eventTeam.innerHTML = [
+        `<option value="${match.HomeTeamId}">${match.HomeTeamName}</option>`,
+        `<option value="${match.AwayTeamId}">${match.AwayTeamName}</option>`
+    ].join('');
+    fillPlayerSelect(Number(eventTeam.value));
+}
+
+function playerOptions(teamId, includeEmpty = true){
+    const teamPlayers = players.filter(p => p.TeamId === teamId).sort((a,b) => text(a.Name).localeCompare(text(b.Name), 'tr'));
+    const empty = includeEmpty ? '<option value="">Seçme</option>' : '';
+    return empty + teamPlayers.map(p => `<option value="${p.PlayerId}">${p.Name}</option>`).join('');
+}
+
+function fillPlayerSelect(teamId){
+    const disabled = !teamId;
+    byId('eventPlayer').innerHTML = disabled ? '<option value="">Seçme</option>' : playerOptions(teamId);
+    byId('playerIn').innerHTML = disabled ? '<option value="">Seçme</option>' : playerOptions(teamId);
+    byId('playerOut').innerHTML = disabled ? '<option value="">Seçme</option>' : playerOptions(teamId);
+    byId('eventPlayer').disabled = disabled;
+    byId('playerIn').disabled = disabled;
+    byId('playerOut').disabled = disabled;
+}
+
+function refreshScoreMatches(){
+    const seasonId = Number(byId('scoreSeason').value);
+    const week = Number(byId('scoreWeek').value);
+    const list = filterMatches(seasonId, week, null);
+    fillMatchSelect(byId('scoreMatch'), list, byId('scoreEmpty'));
+}
+
+function refreshEventMatches(){
+    const seasonId = Number(byId('eventSeason').value);
+    const week = Number(byId('eventWeek').value);
+    const status = byId('eventStatus').value;
+    const list = filterMatches(seasonId, week, status);
+    fillMatchSelect(byId('eventMatch'), list, byId('eventEmpty'));
+    fillTeamSelect(selectedMatch(byId('eventMatch')));
+}
+
+function toggleSubstitutionFields(){
+    const isSubstitution = byId('eventType').value === 'Oyuncu Değişikliği';
+    document.querySelectorAll('.sub-fields').forEach(x => x.classList.toggle('d-none', !isSubstitution));
+    byId('eventPlayerWrap').classList.toggle('d-none', isSubstitution);
+    byId('eventPlayer').disabled = isSubstitution;
+    byId('playerIn').required = isSubstitution;
+    byId('playerOut').required = isSubstitution;
+    if (isSubstitution) {
+        byId('eventPlayer').value = '';
+    } else {
+        byId('playerIn').value = '';
+        byId('playerOut').value = '';
+    }
+}
+
+fillSeasonSelect(byId('scoreSeason'), defaultSeasonId);
+fillSeasonSelect(byId('eventSeason'), defaultSeasonId);
+fillWeekSelect(byId('scoreWeek'), defaultWeek);
+fillWeekSelect(byId('eventWeek'), defaultWeek);
+refreshScoreMatches();
+refreshEventMatches();
+toggleSubstitutionFields();
+
+['scoreSeason','scoreWeek'].forEach(id => byId(id).addEventListener('change', refreshScoreMatches));
+['eventStatus','eventSeason','eventWeek'].forEach(id => byId(id).addEventListener('change', refreshEventMatches));
+byId('eventMatch').addEventListener('change', () => fillTeamSelect(selectedMatch(byId('eventMatch'))));
+byId('eventTeam').addEventListener('change', e => fillPlayerSelect(Number(e.target.value)));
+byId('eventType').addEventListener('change', toggleSubstitutionFields);
+</script>
+}

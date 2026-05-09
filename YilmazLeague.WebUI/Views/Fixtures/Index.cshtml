@@ -1,0 +1,143 @@
+@model List<YilmazLeague.WebUI.Dtos.MatchDto>
+@using Microsoft.AspNetCore.Http
+@{
+    ViewData["Title"] = "Fikstür";
+
+    var seasons = ViewBag.Seasons as List<YilmazLeague.WebUI.Dtos.SeasonDto> ?? new List<YilmazLeague.WebUI.Dtos.SeasonDto>();
+    var fixtures = Model ?? new List<YilmazLeague.WebUI.Dtos.MatchDto>();
+    var selectedSeasonId = ViewBag.SelectedSeasonId as int? ?? seasons.FirstOrDefault(x => x.IsActive)?.SeasonId ?? seasons.FirstOrDefault()?.SeasonId ?? 0;
+    var selectedWeek = ViewBag.SelectedWeek as int? ?? fixtures.FirstOrDefault()?.WeekNumber ?? 1;
+    var weekNumbers = ViewBag.WeekNumbers as List<int> ?? Enumerable.Range(1, 38).ToList();
+    var previousWeek = ViewBag.PreviousWeek as int?;
+    var nextWeek = ViewBag.NextWeek as int?;
+    var selectedSeasonName = seasons.FirstOrDefault(x => x.SeasonId == selectedSeasonId)?.Name ?? "Sezon";
+
+    var completedCount = fixtures.Count(x => x.Status == "Tamamlandı" || x.Status == "Completed");
+    var liveCount = fixtures.Count(x => x.Status == "Canlı");
+    var plannedCount = fixtures.Count(x => x.Status == "Planlandı" || x.Status == "Scheduled");
+    var dayGroups = fixtures.GroupBy(x => x.MatchDate.Date).OrderBy(x => x.Key).ToList();
+}
+
+@section Styles{
+<style>
+:root{--bg:#080d18;--bg2:#0c1220;--card:#111827;--card2:#16202f;--elevated:#1c2d42;--green:#00e676;--blue:#2979ff;--live:#ff1744;--gold:#ffd600;--t1:#eef2ff;--t2:#7b96c4;--t3:#3d5478;--border:#1a2640;--r1:8px;--r2:12px;--r3:16px;--fd:'Barlow Condensed',sans-serif;--fb:'Barlow',sans-serif}body{font-family:var(--fb);background:var(--bg);color:var(--t1);min-height:100vh;background-image:radial-gradient(ellipse at 15% 0%,rgba(41,121,255,.07) 0%,transparent 55%),radial-gradient(ellipse at 85% 0%,rgba(0,230,118,.04) 0%,transparent 50%)}a{text-decoration:none;color:inherit}.wrap{max-width:1120px;margin:0 auto;padding:0 20px}.nb{background:rgba(8,13,24,.96);backdrop-filter:blur(20px);border-bottom:1px solid var(--border);position:sticky;top:0;z-index:1000;box-shadow:0 2px 24px rgba(0,0,0,.5)}.nb-inner{max-width:1120px;margin:0 auto;padding:0 20px;display:flex;align-items:center;justify-content:space-between;gap:16px}.brand{display:flex;align-items:center;gap:10px;padding:10px 0}.nav-links{display:flex}.nl{font-family:var(--fd);font-size:12px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;color:var(--t2);padding:22px 15px;position:relative}.nl::after{content:'';position:absolute;bottom:0;left:15px;right:15px;height:2px;background:var(--green);transform:scaleX(0);transition:.2s}.nl:hover,.nl.active{color:var(--t1)}.nl:hover::after,.nl.active::after{transform:scaleX(1)}.pg-head{background:linear-gradient(135deg,var(--bg2),var(--card));border-bottom:1px solid var(--border);padding:32px 0 24px}.pg-badge{display:inline-flex;align-items:center;gap:7px;background:rgba(255,214,0,.09);border:1px solid rgba(255,214,0,.22);border-radius:20px;padding:4px 12px;font-family:var(--fd);font-size:11px;font-weight:700;letter-spacing:1px;color:var(--gold);text-transform:uppercase;margin-bottom:10px}.pg-title{font-family:var(--fd);font-size:clamp(30px,5vw,48px);font-weight:900}.pg-sub{font-size:13px;color:var(--t2)}.content{padding:24px 0 56px}.fixture-controls{background:var(--card);border:1px solid var(--border);border-radius:var(--r3);padding:14px;display:grid;grid-template-columns:auto 1fr auto;gap:12px;align-items:end;margin-bottom:18px}.filter-form{display:grid;grid-template-columns:1fr 1fr auto;gap:10px;align-items:end}.filter-label{display:block;font-family:var(--fd);font-size:10px;font-weight:800;letter-spacing:1.4px;text-transform:uppercase;color:var(--t3);margin-bottom:5px}.filter-select{width:100%;background:var(--bg2);border:1px solid var(--border);border-radius:var(--r1);color:var(--t1);padding:10px 11px;font-family:var(--fd);font-weight:800;outline:none}.filter-select:focus{border-color:var(--blue)}.filter-btn,.week-btn{height:42px;border-radius:var(--r1);font-family:var(--fd);font-size:11px;font-weight:800;letter-spacing:1px;text-transform:uppercase;display:inline-flex;align-items:center;justify-content:center;gap:7px;padding:0 13px;white-space:nowrap}.filter-btn{background:rgba(0,230,118,.12);border:1px solid rgba(0,230,118,.28);color:var(--green)}.week-btn{background:rgba(41,121,255,.1);border:1px solid rgba(41,121,255,.24);color:var(--blue)}.week-btn.disabled{opacity:.36;color:var(--t3);pointer-events:none}.summary{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin:18px 0 24px}.sum-card{background:var(--card);border:1px solid var(--border);border-radius:var(--r2);padding:16px;text-align:center}.sum-num{font-family:var(--fd);font-size:28px;font-weight:900}.sum-label{font-size:11px;color:var(--t3);text-transform:uppercase;letter-spacing:1px}.day-group{margin-bottom:28px}.day-header{display:flex;align-items:center;gap:12px;margin-bottom:12px}.day-title{font-family:var(--fd);font-size:13px;font-weight:800;letter-spacing:2px;text-transform:uppercase;color:var(--t2)}.day-date{font-family:var(--fd);font-size:12px;color:var(--t3);letter-spacing:1px}.day-line{flex:1;height:1px;background:var(--border)}.day-badge{font-family:var(--fd);font-size:10px;font-weight:700;letter-spacing:1px;text-transform:uppercase;padding:3px 10px;border-radius:8px;background:rgba(41,121,255,.1);border:1px solid rgba(41,121,255,.2);color:var(--blue)}.fx-card{display:block;background:var(--card);border:1px solid var(--border);border-radius:var(--r2);margin-bottom:8px;overflow:hidden;transition:.2s}.fx-card:hover{background:var(--card2);border-color:rgba(41,121,255,.3);transform:translateY(-1px);box-shadow:0 6px 24px rgba(0,0,0,.4)}.fx-inner{display:flex;align-items:center;padding:14px 18px}.fx-time-col{width:72px;flex-shrink:0;text-align:center}.fx-time{font-family:var(--fd);font-size:16px;font-weight:700;color:var(--blue)}.fx-day-label{font-family:var(--fd);font-size:9px;font-weight:700;letter-spacing:.8px;text-transform:uppercase;color:var(--t3)}.fx-divider{width:1px;height:44px;background:var(--border);margin:0 16px;flex-shrink:0}.fx-teams{flex:1;min-width:0;display:grid;grid-template-columns:1fr auto 1fr;align-items:center;gap:8px}.fx-team-home{display:flex;align-items:center;gap:10px;justify-content:flex-end;min-width:0}.fx-team-away{display:flex;align-items:center;gap:10px;min-width:0}.fx-name{font-family:var(--fd);font-size:16px;font-weight:700;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.fx-name.home{text-align:right}.fx-logo{width:28px;height:28px;border-radius:50%;background:var(--elevated);border:1px solid var(--border);display:flex;align-items:center;justify-content:center;overflow:hidden;flex-shrink:0}.fx-logo img{width:100%;height:100%;object-fit:contain;padding:3px}.vs-text{font-family:var(--fd);font-size:15px;font-weight:900;color:var(--t1);min-width:52px;text-align:center}.fx-right{display:flex;flex-direction:column;align-items:flex-end;gap:6px;margin-left:14px;flex-shrink:0}.fx-status{font-family:var(--fd);font-size:10px;font-weight:700;letter-spacing:1px;text-transform:uppercase;background:rgba(41,121,255,.08);border:1px solid rgba(41,121,255,.2);color:var(--blue);border-radius:var(--r1);padding:5px 10px;display:inline-flex;align-items:center;gap:6px}.fx-status.live{background:rgba(255,23,68,.1);border-color:rgba(255,23,68,.28);color:var(--live)}.fx-status.done{background:rgba(0,230,118,.08);border-color:rgba(0,230,118,.22);color:var(--green)}.live-dot{width:8px;height:8px;border-radius:50%;background:var(--live);box-shadow:0 0 0 rgba(255,23,68,.7);animation:pulseLive 1s infinite}@@keyframes pulseLive{0%{box-shadow:0 0 0 0 rgba(255,23,68,.7)}70%{box-shadow:0 0 0 8px rgba(255,23,68,0)}100%{box-shadow:0 0 0 0 rgba(255,23,68,0)}}.empty-state{background:var(--card);border:1px solid var(--border);border-radius:var(--r3);padding:48px;text-align:center;color:var(--t2)}.ft{background:var(--bg2);border-top:1px solid var(--border);padding:32px 0}.ft-brand{font-family:var(--fd);font-size:20px;font-weight:800}.ft-brand span{color:var(--green)}@@media(max-width:900px){.fixture-controls{grid-template-columns:1fr}.filter-form{grid-template-columns:1fr}.summary{grid-template-columns:1fr}.fx-right{display:none}.fx-inner{padding:13px}.fx-time-col{width:56px}.fx-divider{margin:0 10px}.fx-name{font-size:13px}.fx-logo{width:22px;height:22px}.vs-text{min-width:42px;font-size:13px}.nav-links{display:none!important}}
+</style>
+}
+
+<nav class="nb">
+  <div class="nb-inner">
+    <a asp-controller="Matches" asp-action="Index" class="brand"><img src="~/images/yilmazleaguelogo.png" asp-append-version="true" alt="YilmazLeague" class="brand-logo" /></a>
+    <div class="nav-links d-none d-lg-flex">
+      <a asp-controller="Matches" asp-action="Index" class="nl">Ana Sayfa</a>
+      <a asp-controller="Live" asp-action="Index" class="nl">Canlı Skorlar</a>
+      <a asp-controller="Fixtures" asp-action="Index" class="nl active">Fikstür</a>
+      <a asp-controller="Standings" asp-action="Index" class="nl">Puan Durumu</a>
+      @if (Context.Session.GetString("IsAdmin") == "true") { <a asp-controller="Admin" asp-action="Index" class="nl">Admin</a> }
+    </div>
+  </div>
+</nav>
+
+<header class="pg-head">
+  <div class="wrap">
+    <div class="pg-badge"><i class="bi bi-calendar-week"></i> @selectedSeasonName</div>
+    <div class="pg-title">@selectedWeek. Hafta Fikstürü</div>
+    <div class="pg-sub">Haftanın maçları, skorları ve canlı durumları</div>
+  </div>
+</header>
+
+<main class="content">
+  <div class="wrap">
+    <section class="fixture-controls">
+      <a class="week-btn @(previousWeek.HasValue ? "" : "disabled")" asp-controller="Fixtures" asp-action="Index" asp-route-seasonId="@selectedSeasonId" asp-route-week="@previousWeek">
+        <i class="bi bi-chevron-left"></i> Geçen Hafta
+      </a>
+
+      <form method="get" asp-controller="Fixtures" asp-action="Index" class="filter-form">
+        <div>
+          <label class="filter-label">Sezon</label>
+          <select name="seasonId" class="filter-select">
+            @foreach (var season in seasons)
+            {
+                <option value="@season.SeasonId" selected="@(season.SeasonId == selectedSeasonId)">@season.Name</option>
+            }
+          </select>
+        </div>
+        <div>
+          <label class="filter-label">Hafta</label>
+          <select name="week" class="filter-select">
+            @foreach (var week in weekNumbers)
+            {
+                <option value="@week" selected="@(week == selectedWeek)">Hafta @week</option>
+            }
+          </select>
+        </div>
+        <button type="submit" class="filter-btn"><i class="bi bi-funnel"></i> Göster</button>
+      </form>
+
+      <a class="week-btn @(nextWeek.HasValue ? "" : "disabled")" asp-controller="Fixtures" asp-action="Index" asp-route-seasonId="@selectedSeasonId" asp-route-week="@nextWeek">
+        Sonraki Hafta <i class="bi bi-chevron-right"></i>
+      </a>
+    </section>
+
+    <section class="summary">
+      <div class="sum-card"><div class="sum-num">@fixtures.Count</div><div class="sum-label">Toplam Maç</div></div>
+      <div class="sum-card"><div class="sum-num">@completedCount</div><div class="sum-label">Tamamlandı</div></div>
+      <div class="sum-card"><div class="sum-num">@liveCount</div><div class="sum-label">Canlı</div></div>
+    </section>
+
+    @if (!fixtures.Any())
+    {
+      <div class="empty-state">Bu hafta için maç bulunamadı.</div>
+    }
+    else
+    {
+      foreach (var group in dayGroups)
+      {
+        <section class="day-group">
+          <div class="day-header">
+            <div class="day-title">@group.Key.ToString("dddd")</div>
+            <div class="day-date">@group.Key.ToString("dd MMMM yyyy")</div>
+            <div class="day-line"></div>
+            <div class="day-badge">@group.Count() maç</div>
+          </div>
+
+          @foreach (var match in group.OrderBy(x => x.MatchDate))
+          {
+              var isLive = match.Status == "Canlı";
+              var isDone = match.Status == "Tamamlandı" || match.Status == "Completed";
+              var statusClass = isLive ? "live" : isDone ? "done" : "";
+              var statusText = isLive ? $"Canlı - {match.LiveMinute ?? 0}'" : isDone ? "Tamamlandı" : "Planlandı";
+              var scoreText = match.HomeScore.HasValue && match.AwayScore.HasValue ? $"{match.HomeScore}-{match.AwayScore}" : "VS";
+
+              <a class="fx-card" asp-controller="Matches" asp-action="Detail" asp-route-id="@match.LeagueMatchId">
+                <div class="fx-inner">
+                  <div class="fx-time-col">
+                    <div class="fx-time">@match.MatchDate.ToString("HH:mm")</div>
+                    <div class="fx-day-label">@selectedWeek. Hafta</div>
+                  </div>
+                  <div class="fx-divider"></div>
+                  <div class="fx-teams">
+                    <div class="fx-team-home">
+                      <span class="fx-name home">@match.HomeTeamName</span>
+                      <span class="fx-logo"><img src="@match.HomeTeamLogo" alt="@match.HomeTeamName" /></span>
+                    </div>
+                    <div class="vs-text">@scoreText</div>
+                    <div class="fx-team-away">
+                      <span class="fx-logo"><img src="@match.AwayTeamLogo" alt="@match.AwayTeamName" /></span>
+                      <span class="fx-name">@match.AwayTeamName</span>
+                    </div>
+                  </div>
+                  <div class="fx-right">
+                    <span class="fx-status @statusClass">@if (isLive) { <span class="live-dot"></span> } @statusText</span>
+                    <span class="fx-day-label">Detaya git</span>
+                  </div>
+                </div>
+              </a>
+          }
+        </section>
+      }
+    }
+  </div>
+</main>
+
+<footer class="ft"><div class="wrap"><div class="ft-brand">Yilmaz<span>League</span></div></div></footer>

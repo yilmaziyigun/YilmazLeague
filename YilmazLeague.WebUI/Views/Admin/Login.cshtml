@@ -1,0 +1,26 @@
+﻿@{
+    ViewData["Title"] = "Admin Giriş";
+}
+@section Styles{
+<style>
+:root{--bg:#080d18;--bg2:#0c1220;--card:#111827;--green:#00e676;--blue:#2979ff;--live:#ff1744;--gold:#ffd600;--t1:#eef2ff;--t2:#7b96c4;--t3:#3d5478;--border:#1a2640;--r1:8px;--r2:12px;--r3:16px;--fd:'Barlow Condensed',sans-serif;--fb:'Barlow',sans-serif}body{font-family:var(--fb);background:var(--bg);color:var(--t1);min-height:100vh;background-image:radial-gradient(ellipse at 20% 0%,rgba(41,121,255,.10),transparent 52%),radial-gradient(ellipse at 85% 15%,rgba(0,230,118,.06),transparent 45%)}a{text-decoration:none;color:inherit}.wrap{max-width:1120px;margin:0 auto;padding:0 20px}.nb{background:rgba(8,13,24,.96);border-bottom:1px solid var(--border)}.nb-inner{max-width:1120px;margin:0 auto;padding:0 20px;display:flex;align-items:center;justify-content:space-between}.brand{display:flex;align-items:center;gap:10px;padding:14px 0}.brand-ico{width:34px;height:34px;background:linear-gradient(135deg,var(--green),var(--blue));border-radius:7px;display:flex;align-items:center;justify-content:center}.brand-txt{font-family:var(--fd);font-size:21px;font-weight:800}.brand-txt span{color:var(--green)}.nav-links{display:flex}.nl{font-family:var(--fd);font-size:12px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;color:var(--t2);padding:22px 15px}.nl:hover{color:var(--t1)}.login-wrap{min-height:calc(100vh - 66px);display:flex;align-items:center;justify-content:center;padding:38px 20px}.login-card{width:100%;max-width:420px;background:var(--card);border:1px solid var(--border);border-radius:var(--r3);padding:26px}.badge{display:inline-flex;align-items:center;gap:7px;background:rgba(255,214,0,.09);border:1px solid rgba(255,214,0,.22);border-radius:20px;padding:5px 12px;font-family:var(--fd);font-size:11px;font-weight:800;letter-spacing:1px;color:var(--gold);text-transform:uppercase}.title{font-family:var(--fd);font-size:42px;font-weight:900;margin:12px 0 4px}.sub{color:var(--t2);font-size:13px;margin-bottom:20px}.form-label{font-size:12px;color:var(--t2)}.form-control{background:var(--bg2);border:1px solid var(--border);color:var(--t1);border-radius:var(--r1)}.form-control:focus{background:var(--bg2);color:var(--t1);border-color:var(--blue);box-shadow:none}.btn-main{width:100%;background:rgba(41,121,255,.16);border:1px solid rgba(41,121,255,.35);color:var(--blue);border-radius:var(--r1);font-family:var(--fd);font-weight:800;letter-spacing:1px;text-transform:uppercase;padding:10px 14px}.btn-main:hover{background:rgba(41,121,255,.25);color:var(--t1)}.alert-ok{background:rgba(0,230,118,.08);border:1px solid rgba(0,230,118,.2);color:var(--green);border-radius:var(--r2);padding:10px 14px;margin-bottom:14px}.alert-error{background:rgba(255,23,68,.08);border:1px solid rgba(255,23,68,.25);color:var(--live);border-radius:var(--r2);padding:10px 14px;margin-bottom:14px}.hint{font-size:12px;color:var(--t3);margin-top:12px;text-align:center}
+</style>
+}
+<nav class="nb"><div class="nb-inner"><a asp-controller="Matches" asp-action="Index" class="brand"><img src="~/images/yilmazleaguelogo.png" asp-append-version="true" alt="YilmazLeague" class="brand-logo" /></a><div class="nav-links d-none d-lg-flex"><a asp-controller="Matches" asp-action="Index" class="nl">Ana Sayfa</a><a asp-controller="Live" asp-action="Index" class="nl">Canlı Skorlar</a><a asp-controller="Fixtures" asp-action="Index" class="nl">Fikstür</a><a asp-controller="Standings" asp-action="Index" class="nl">Puan Durumu</a></div></div></nav>
+<main class="login-wrap">
+    <div class="login-card">
+        <div class="badge"><i class="bi bi-shield-lock"></i> Yönetim</div>
+        <h1 class="title">Admin Giriş</h1>
+        <p class="sub">Yönetim paneli sadece giriş yapan kullanıcıya görünür.</p>
+        @if (TempData["Success"] != null){<div class="alert-ok">@TempData["Success"]</div>}
+        @if (TempData["Error"] != null){<div class="alert-error">@TempData["Error"]</div>}
+        <form asp-action="Login" method="post">
+            <div class="mb-3"><label class="form-label">Kullanıcı Adı</label><input name="username" class="form-control" autocomplete="username" required /></div>
+            <div class="mb-3"><label class="form-label">Şifre</label><input name="password" type="password" class="form-control" autocomplete="current-password" required /></div>
+            <button class="btn-main" type="submit">Giriş Yap</button>
+        </form>
+        <div class="hint">© Yılmaz İYİGÜN </div>
+        <div class="hint">Demo giriş: admin / 1234</div>
+         
+    </div>
+</main>

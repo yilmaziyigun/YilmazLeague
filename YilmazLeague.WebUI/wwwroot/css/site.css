@@ -1,0 +1,33 @@
+﻿html {
+  font-size: 14px;
+}
+
+@media (min-width: 768px) {
+  html {
+    font-size: 16px;
+  }
+}
+
+html {
+  position: relative;
+  min-height: 100%;
+}
+
+body {
+  margin-bottom: 60px;
+}
+
+.brand-logo {
+  width: 164px;
+  height: 46px;
+  object-fit: contain;
+  display: block;
+}
+
+@media (max-width: 576px) {
+  .brand-logo {
+    width: 132px;
+    height: 38px;
+  }
+}
+

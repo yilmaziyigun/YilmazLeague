@@ -1,0 +1,49 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.14.36623.8 d17.14
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "YilmazLeague.EntityLayer", "YilmazLeague.EntityLayer\YilmazLeague.EntityLayer.csproj", "{BC2A8C18-189B-425F-AE02-9E0A7ABE116F}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "YilmazLeague.BusinessLayer", "YilmazLeague.BusinessLayer\YilmazLeague.BusinessLayer.csproj", "{6B7F2D2B-66A9-472A-AA28-203536CD5BBA}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "YilmazLeague.WebApi", "YilmazLeague.WebApi\YilmazLeague.WebApi.csproj", "{C2D5B1C2-7A68-4531-A8A9-D5B44475518D}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "YilmazLeague.WebUI", "YilmazLeague.WebUI\YilmazLeague.WebUI.csproj", "{0811F44D-FE15-4597-BA13-21AF580DFD11}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "YilmazLeague.DataAccessLayer", "YilmazLeague.DataAccessLayer\YilmazLeague.DataAccessLayer.csproj", "{FA1EF2F5-E713-4AAF-B580-CFDAEC39768C}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{BC2A8C18-189B-425F-AE02-9E0A7ABE116F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{BC2A8C18-189B-425F-AE02-9E0A7ABE116F}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{BC2A8C18-189B-425F-AE02-9E0A7ABE116F}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{BC2A8C18-189B-425F-AE02-9E0A7ABE116F}.Release|Any CPU.Build.0 = Release|Any CPU
+		{6B7F2D2B-66A9-472A-AA28-203536CD5BBA}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{6B7F2D2B-66A9-472A-AA28-203536CD5BBA}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{6B7F2D2B-66A9-472A-AA28-203536CD5BBA}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{6B7F2D2B-66A9-472A-AA28-203536CD5BBA}.Release|Any CPU.Build.0 = Release|Any CPU
+		{C2D5B1C2-7A68-4531-A8A9-D5B44475518D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{C2D5B1C2-7A68-4531-A8A9-D5B44475518D}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{C2D5B1C2-7A68-4531-A8A9-D5B44475518D}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{C2D5B1C2-7A68-4531-A8A9-D5B44475518D}.Release|Any CPU.Build.0 = Release|Any CPU
+		{0811F44D-FE15-4597-BA13-21AF580DFD11}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{0811F44D-FE15-4597-BA13-21AF580DFD11}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{0811F44D-FE15-4597-BA13-21AF580DFD11}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{0811F44D-FE15-4597-BA13-21AF580DFD11}.Release|Any CPU.Build.0 = Release|Any CPU
+		{FA1EF2F5-E713-4AAF-B580-CFDAEC39768C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{FA1EF2F5-E713-4AAF-B580-CFDAEC39768C}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{FA1EF2F5-E713-4AAF-B580-CFDAEC39768C}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{FA1EF2F5-E713-4AAF-B580-CFDAEC39768C}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {E0D3CB09-0DF3-4386-A099-5093DB5F4C6C}
+	EndGlobalSection
+EndGlobal

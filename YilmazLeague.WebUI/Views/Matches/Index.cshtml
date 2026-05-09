@@ -1,0 +1,53 @@
+﻿@model YilmazLeague.WebUI.Dtos.DashboardStatsDto
+@{
+    ViewData["Title"] = "Ana Sayfa";
+    var seasons = ViewBag.Seasons as List<YilmazLeague.WebUI.Dtos.SeasonDto> ?? new List<YilmazLeague.WebUI.Dtos.SeasonDto>();
+    var selectedSeasonId = Convert.ToInt32(ViewBag.SelectedSeasonId ?? Model?.SeasonId ?? 4);
+    var stats = Model;
+    var cards = new List<(string Title, YilmazLeague.WebUI.Dtos.LeaderDto Item, string Color, string EmptyText)>();
+
+    if (stats != null)
+    {
+        cards = new List<(string Title, YilmazLeague.WebUI.Dtos.LeaderDto Item, string Color, string EmptyText)>
+        {
+            ("Gol Kralı", stats.TopScorer, "var(--green)", "Henüz gol yok"),
+            ("En Golcü Takım", stats.TopScoringTeam, "var(--blue)", "Veri yok"),
+            ("En Çok Gol Yiyen", stats.MostConcededTeam, "var(--live)", "Veri yok"),
+            ("En Çok Kart Gören", stats.MostCardedPlayer, "var(--gold)", "Kart verisi yok"),
+            ("Kötü Gidişat", stats.WorstFormTeam, "var(--yellow)", "Veri yok")
+        };
+    }
+}
+@section Styles{
+<style>
+:root{--bg:#080d18;--bg2:#0c1220;--card:#111827;--card2:#16202f;--green:#00e676;--blue:#2979ff;--live:#ff1744;--gold:#ffd600;--yellow:#ffc107;--t1:#eef2ff;--t2:#7b96c4;--t3:#3d5478;--border:#1a2640;--r1:8px;--r2:12px;--r3:16px;--fd:'Barlow Condensed',sans-serif;--fb:'Barlow',sans-serif}body{font-family:var(--fb);background:var(--bg);color:var(--t1);min-height:100vh;background-image:radial-gradient(ellipse at 15% 0%,rgba(41,121,255,.07) 0%,transparent 55%),radial-gradient(ellipse at 85% 0%,rgba(0,230,118,.04) 0%,transparent 50%)}a{text-decoration:none;color:inherit}.wrap{max-width:1120px;margin:0 auto;padding:0 20px}.nb{background:rgba(8,13,24,.96);border-bottom:1px solid var(--border);position:sticky;top:0;z-index:1000}.nb-inner{max-width:1120px;margin:0 auto;padding:0 20px;display:flex;align-items:center;justify-content:space-between;gap:16px}.brand{display:flex;align-items:center;gap:10px;padding:14px 0}.brand-ico{width:34px;height:34px;background:linear-gradient(135deg,var(--green),var(--blue));border-radius:7px;display:flex;align-items:center;justify-content:center}.brand-txt{font-family:var(--fd);font-size:21px;font-weight:800}.brand-txt span{color:var(--green)}.nav-links{display:flex}.nl{font-family:var(--fd);font-size:12px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;color:var(--t2);padding:22px 15px;position:relative}.nl.active,.nl:hover{color:var(--t1)}.hero{background:linear-gradient(135deg,var(--bg2),var(--card));border-bottom:1px solid var(--border);padding:34px 0}.hero-grid{display:grid;grid-template-columns:1fr auto;gap:20px;align-items:end}.badge{display:inline-flex;align-items:center;gap:7px;background:rgba(255,214,0,.09);border:1px solid rgba(255,214,0,.22);border-radius:20px;padding:5px 12px;font-family:var(--fd);font-size:11px;font-weight:800;letter-spacing:1px;color:var(--gold);text-transform:uppercase}.title{font-family:var(--fd);font-size:clamp(32px,6vw,58px);font-weight:900;margin-top:10px}.sub{color:var(--t2);font-size:13px}.season-form{background:rgba(17,24,39,.82);border:1px solid var(--border);border-radius:var(--r2);padding:12px;display:flex;gap:10px;align-items:end}.label{display:block;font-family:var(--fd);font-size:10px;font-weight:800;letter-spacing:1.4px;text-transform:uppercase;color:var(--t3);margin-bottom:5px}.select{background:var(--bg2);border:1px solid var(--border);border-radius:var(--r1);color:var(--t1);padding:10px 12px;font-family:var(--fd);font-weight:800;min-width:180px}.btn{height:42px;background:rgba(0,230,118,.12);border:1px solid rgba(0,230,118,.28);color:var(--green);border-radius:var(--r1);padding:0 14px;font-family:var(--fd);font-size:11px;font-weight:800;letter-spacing:1px;text-transform:uppercase}.content{padding:28px 0 56px}.quick{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-bottom:18px}.quick-card{background:var(--card);border:1px solid var(--border);border-radius:var(--r2);padding:16px;text-align:center}.quick-num{font-family:var(--fd);font-size:32px;font-weight:900}.quick-label{font-size:11px;color:var(--t3);letter-spacing:1px;text-transform:uppercase}.cards{display:grid;grid-template-columns:repeat(5,1fr);gap:12px}.stat-card{background:var(--card);border:1px solid var(--border);border-radius:var(--r2);padding:16px;min-height:190px;display:flex;flex-direction:column;justify-content:space-between}.stat-head{font-family:var(--fd);font-size:11px;font-weight:800;letter-spacing:1.4px;text-transform:uppercase;color:var(--t3)}.stat-logo{width:42px;height:42px;border-radius:50%;background:#1c2d42;border:1px solid var(--border);display:flex;align-items:center;justify-content:center;overflow:hidden;margin:14px 0}.stat-logo img{width:100%;height:100%;object-fit:contain;padding:5px}.stat-name{font-family:var(--fd);font-size:20px;font-weight:900;line-height:1.05}.stat-sub{font-size:12px;color:var(--t2);margin-top:4px}.stat-value{font-family:var(--fd);font-size:28px;font-weight:900;margin-top:12px}.recent-title{font-family:var(--fd);font-size:13px;font-weight:800;letter-spacing:1.6px;text-transform:uppercase;color:var(--t2);margin:28px 0 10px}.matches{display:grid;grid-template-columns:repeat(2,1fr);gap:10px}.match{display:block;background:var(--card);border:1px solid var(--border);border-radius:var(--r2);padding:14px;transition:.2s}.match:hover{background:var(--card2);border-color:rgba(41,121,255,.35);transform:translateY(-1px)}.match-row{display:grid;grid-template-columns:1fr auto 1fr;align-items:center;gap:10px}.team{font-family:var(--fd);font-size:15px;font-weight:800;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.team.home{text-align:right}.score{font-family:var(--fd);font-size:20px;font-weight:900;min-width:52px;text-align:center;color:var(--green)}.meta{text-align:center;color:var(--t3);font-size:11px;margin-top:8px;display:flex;align-items:center;justify-content:center;gap:6px}.live-dot{width:8px;height:8px;border-radius:50%;background:var(--live);box-shadow:0 0 0 rgba(255,23,68,.65);animation:pulseLive 1s infinite}@@keyframes pulseLive{0%{box-shadow:0 0 0 0 rgba(255,23,68,.65)}70%{box-shadow:0 0 0 8px rgba(255,23,68,0)}100%{box-shadow:0 0 0 0 rgba(255,23,68,0)}}.empty{background:var(--card);border:1px solid var(--border);border-radius:var(--r3);padding:40px;text-align:center;color:var(--t2)}@@media(max-width:1000px){.cards{grid-template-columns:repeat(2,1fr)}.hero-grid{grid-template-columns:1fr}.quick,.matches{grid-template-columns:1fr}}@@media(max-width:600px){.cards{grid-template-columns:1fr}.season-form{display:block}.select{width:100%;margin-bottom:10px}}
+</style>
+}
+<nav class="nb"><div class="nb-inner"><a asp-controller="Matches" asp-action="Index" class="brand"><img src="~/images/yilmazleaguelogo.png" asp-append-version="true" alt="YilmazLeague" class="brand-logo" /></a><div class="nav-links d-none d-lg-flex"><a asp-controller="Matches" asp-action="Index" class="nl active">Ana Sayfa</a><a asp-controller="Live" asp-action="Index" class="nl">Canlı Skorlar</a><a asp-controller="Fixtures" asp-action="Index" class="nl">Fikstür</a><a asp-controller="Standings" asp-action="Index" class="nl">Puan Durumu</a>@if (Context.Session.GetString("IsAdmin") == "true") { <a asp-controller="Admin" asp-action="Index" class="nl">Admin</a> }</div></div></nav>
+<section class="hero"><div class="wrap"><div class="hero-grid"><div><div class="badge"><i class="bi bi-speedometer2"></i> @(stats?.SeasonName ?? "Sezon")</div><h1 class="title">Lig <span style="color:var(--green)">Özeti</span></h1><p class="sub">Gol, savunma, form ve canlı maç bilgileri</p></div><form asp-controller="Matches" asp-action="Index" method="get" class="season-form"><div><label class="label">Sezon</label><select class="select" name="seasonId" onchange="this.form.submit()">@foreach(var season in seasons){<option value="@season.SeasonId" selected="@(season.SeasonId == selectedSeasonId)">@season.Name</option>}</select></div><button class="btn" type="submit">Göster</button></form></div></div></section>
+<main class="wrap"><div class="content">
+@if (stats == null)
+{
+    <div class="empty">İstatistik verisi alınamadı.</div>
+}
+else
+{
+    <div class="quick"><div class="quick-card"><div class="quick-num" style="color:var(--green)">@stats.CompletedMatches</div><div class="quick-label">Tamamlanan Maç</div></div><div class="quick-card"><div class="quick-num" style="color:var(--blue)">@stats.PlannedMatches</div><div class="quick-label">Planlanan Maç</div></div><div class="quick-card"><div class="quick-num" style="color:var(--live)">@stats.LiveMatches</div><div class="quick-label">Canlı Maç</div></div></div>
+
+    <div class="cards">
+    @foreach (var card in cards)
+    {
+        <div class="stat-card"><div><div class="stat-head">@card.Title</div>@if (card.Item != null) { <div class="stat-logo"><img src="@card.Item.LogoUrl" alt="@card.Item.Name" onerror="this.style.display='none'" /></div><div class="stat-name">@card.Item.Name</div><div class="stat-sub">@card.Item.Secondary</div> } else { <div class="stat-logo"><i class="bi bi-dash-lg"></i></div><div class="stat-name">@card.EmptyText</div><div class="stat-sub">Veri girildikçe dolar</div> }</div><div class="stat-value" style="color:@card.Color">@(card.Item != null ? $"{card.Item.Value} {card.Item.Unit}" : "-")</div></div>
+    }
+    </div>
+    <div class="recent-title">Önümüzdeki Hafta</div>
+    <div class="matches">
+    @foreach (var match in stats.NextWeekMatches)
+    {
+        <a class="match" asp-controller="Matches" asp-action="Detail" asp-route-id="@match.LeagueMatchId"><div class="match-row"><div class="team home">@match.HomeTeamName</div><div class="score">@(match.HomeScore != null && match.AwayScore != null ? $"{match.HomeScore}-{match.AwayScore}" : "VS")</div><div class="team">@match.AwayTeamName</div></div><div class="meta">@if (match.Status == "Canlı") { <span class="live-dot"></span><span>CANLI · @(match.LiveMinute ?? 0)'</span> } else { <span>@match.WeekNumber. Hafta · @match.Status</span> }</div></a>
+    }
+    </div>
+}
+</div></main>
+
+

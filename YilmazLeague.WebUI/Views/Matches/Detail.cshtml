@@ -1,0 +1,224 @@
+﻿@model YilmazLeague.WebUI.ViewModels.MatchDetailViewModel
+@{
+    ViewData["Title"] = "Maç Detayı";
+    var match = Model.Match;
+    var events = Model.Events.OrderBy(x => x.Minute).ToList();
+    var goals = events.Where(x => x.EventType == "Gol").ToList();
+    var cards = events.Where(x => x.EventType == "Sarı Kart" || x.EventType == "Kırmızı Kart").ToList();
+    var substitutions = events.Where(x => x.EventType == "Oyuncu Değişikliği").ToList();
+    var isCompleted = match.Status == "Tamamlandı";
+    var isLive = match.Status == "Canlı";
+    var hasScore = match.HomeScore != null && match.AwayScore != null;
+    var eventHomeScore = goals.Count(x => x.TeamId == match.HomeTeamId);
+    var eventAwayScore = goals.Count(x => x.TeamId == match.AwayTeamId);
+    var hasGoalEvents = eventHomeScore + eventAwayScore > 0;
+    var displayHomeScore = hasGoalEvents ? eventHomeScore : match.HomeScore;
+    var displayAwayScore = hasGoalEvents ? eventAwayScore : match.AwayScore;
+    var hasDisplayScore = displayHomeScore != null && displayAwayScore != null;
+}
+
+@section Styles {
+<style>
+:root{--bg:#080d18;--bg2:#0c1220;--card:#111827;--card2:#16202f;--elevated:#1c2d42;--green:#00e676;--blue:#2979ff;--live:#ff1744;--gold:#ffd600;--yellow:#ffc107;--red:#f44336;--t1:#eef2ff;--t2:#7b96c4;--t3:#3d5478;--border:#1a2640;--r1:8px;--r2:12px;--r3:16px;--tr:all .22s cubic-bezier(.4,0,.2,1);--fd:'Barlow Condensed',sans-serif;--fb:'Barlow',sans-serif}
+body{font-family:var(--fb);background:var(--bg);color:var(--t1);min-height:100vh;background-image:radial-gradient(ellipse at 15% 0%,rgba(41,121,255,.07) 0%,transparent 55%),radial-gradient(ellipse at 85% 0%,rgba(0,230,118,.04) 0%,transparent 50%)}
+a{text-decoration:none;color:inherit}a:hover{color:inherit}.wrap{max-width:1120px;margin:0 auto;padding:0 20px}.nb{background:rgba(8,13,24,.96);backdrop-filter:blur(20px);border-bottom:1px solid var(--border);position:sticky;top:0;z-index:1000;box-shadow:0 2px 24px rgba(0,0,0,.5)}.nb-inner{max-width:1120px;margin:0 auto;padding:0 20px;display:flex;align-items:center;justify-content:space-between;gap:16px}.brand{display:flex;align-items:center;gap:10px;padding:14px 0}.brand-ico{width:34px;height:34px;background:linear-gradient(135deg,var(--green),var(--blue));border-radius:7px;display:flex;align-items:center;justify-content:center;font-size:17px}.brand-txt{font-family:var(--fd);font-size:21px;font-weight:800;letter-spacing:1px}.brand-txt span{color:var(--green)}.nav-links{display:flex}.nl{font-family:var(--fd);font-size:12px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;color:var(--t2);padding:22px 15px;position:relative;transition:var(--tr)}.nl::after{content:'';position:absolute;bottom:0;left:15px;right:15px;height:2px;background:var(--green);transform:scaleX(0);transition:var(--tr)}.nl:hover,.nl.active{color:var(--t1)}.nl:hover::after,.nl.active::after{transform:scaleX(1)}.ico-btn,.tog{width:36px;height:36px;background:var(--card);border:1px solid var(--border);border-radius:var(--r1);color:var(--t2);display:flex;align-items:center;justify-content:center;font-size:14px;transition:var(--tr)}.mob-menu{max-height:0;overflow:hidden;transition:max-height .3s ease}.mob-menu.open{max-height:300px}.mob-menu .nl{padding:14px 0;border-bottom:1px solid var(--border);display:block}
+.hero{background:linear-gradient(180deg,#0b1830 0%,var(--bg) 100%);border-bottom:1px solid var(--border);padding:36px 0 28px}.hero-badges{display:flex;align-items:center;justify-content:center;gap:8px;margin-bottom:26px;flex-wrap:wrap}.hbadge{font-family:var(--fd);font-size:10px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;padding:4px 12px;border-radius:20px;display:inline-flex;align-items:center;gap:6px}.hb-live{background:rgba(255,23,68,.1);border:1px solid rgba(255,23,68,.25);color:var(--live)}.live-dot{width:8px;height:8px;border-radius:50%;background:var(--live);box-shadow:0 0 0 rgba(255,23,68,.7);animation:pulseLive 1s infinite}@@keyframes pulseLive{0%{box-shadow:0 0 0 0 rgba(255,23,68,.7)}70%{box-shadow:0 0 0 8px rgba(255,23,68,0)}100%{box-shadow:0 0 0 0 rgba(255,23,68,0)}}.hb-gold{background:rgba(255,214,0,.09);border:1px solid rgba(255,214,0,.2);color:var(--gold)}.hb-gray{background:rgba(143,163,200,.08);color:var(--t3)}.hero-grid{display:grid;grid-template-columns:1fr auto 1fr;gap:20px;align-items:center}.h-team{display:flex;flex-direction:column;align-items:center;gap:12px}.h-logo{width:86px;height:86px;border-radius:50%;background:var(--card);border:2px solid var(--border);display:flex;align-items:center;justify-content:center;font-family:var(--fd);font-size:24px;font-weight:900;overflow:hidden}.h-logo img{width:100%;height:100%;object-fit:contain;padding:8px}.h-name{font-family:var(--fd);font-size:clamp(18px,3vw,26px);font-weight:900;letter-spacing:.3px;text-align:center}.h-type{font-size:10px;color:var(--t3);text-transform:uppercase;letter-spacing:1.5px;font-weight:600}.h-score-c{display:flex;flex-direction:column;align-items:center;gap:10px}.h-sc{font-family:var(--fd);font-size:clamp(54px,10vw,88px);font-weight:900;letter-spacing:-4px;line-height:1;background:linear-gradient(180deg,#fff 0%,#8fa3c8 100%);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}.h-ft{font-family:var(--fd);font-size:12px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;color:var(--t3)}.info-strip{display:flex;align-items:center;justify-content:center;gap:22px;margin-top:22px;padding-top:18px;border-top:1px solid var(--border);flex-wrap:wrap}.istrip{display:flex;align-items:center;gap:6px;font-size:12px;color:var(--t2)}.istrip i{color:var(--t3)}
+.content{padding:28px 0 56px}.dc{background:var(--card);border:1px solid var(--border);border-radius:var(--r3);padding:22px;margin-bottom:18px}.dc-title{font-family:var(--fd);font-size:11px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:var(--t3);margin-bottom:18px;display:flex;align-items:center;gap:10px}.dc-title::after{content:'';flex:1;height:1px;background:var(--border)}.back-btn{display:inline-flex;align-items:center;gap:7px;background:var(--card);border:1px solid var(--border);border-radius:var(--r2);color:var(--t2);padding:10px 18px;font-family:var(--fd);font-size:12px;font-weight:700;letter-spacing:1px;text-transform:uppercase;transition:var(--tr);margin-bottom:22px}.back-btn:hover{background:var(--elevated);border-color:var(--blue);color:var(--t1)}
+.tl-wrap{position:relative}.tl-line{position:absolute;left:50%;top:0;bottom:0;width:1px;background:var(--border);transform:translateX(-50%)}.tl-ev{display:grid;grid-template-columns:1fr 58px 1fr;gap:10px;align-items:center;margin-bottom:10px}.tl-home{display:flex;justify-content:flex-end}.tl-away{display:flex;justify-content:flex-start}.tl-min-c{display:flex;align-items:center;justify-content:center}.min-b{background:var(--elevated);border:1px solid var(--border);border-radius:11px;padding:3px 8px;font-family:var(--fd);font-size:11px;font-weight:700;color:var(--t2);white-space:nowrap;position:relative;z-index:1}.chip{display:flex;align-items:center;gap:7px;background:var(--elevated);border:1px solid var(--border);border-radius:var(--r1);padding:8px 11px;max-width:220px}.chip.home{flex-direction:row-reverse;text-align:right}.goal-ev{border-color:rgba(0,230,118,.25);background:rgba(0,230,118,.06)}.yel-ev{border-color:rgba(255,193,7,.25);background:rgba(255,193,7,.06)}.red-ev{border-color:rgba(244,67,54,.25);background:rgba(244,67,54,.06)}.sub-ev{border-color:rgba(41,121,255,.2);background:rgba(41,121,255,.05)}.ev-ico{width:26px;height:26px;border-radius:6px;display:flex;align-items:center;justify-content:center;font-size:13px;flex-shrink:0}.ei-goal{background:rgba(0,230,118,.15);color:var(--green)}.ei-yel{background:rgba(255,193,7,.15);color:var(--yellow)}.ei-red{background:rgba(244,67,54,.15);color:var(--red)}.ei-sub{background:rgba(41,121,255,.12);color:var(--blue)}.ev-pl{font-family:var(--fd);font-size:14px;font-weight:700;color:var(--t1)}.ev-dt{font-size:10px;color:var(--t3)}.split2{display:grid;grid-template-columns:1fr 1fr;gap:14px}.box2{padding:14px;background:var(--bg2);border-radius:var(--r2);border:1px solid var(--border)}.box2-title{font-family:var(--fd);font-size:10px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;color:var(--t3);margin-bottom:10px}.gl{display:flex;align-items:center;gap:9px;padding:6px 0;border-bottom:1px solid rgba(255,255,255,.04)}.gl:last-child{border-bottom:none}.gl-ico{width:20px;height:20px;background:rgba(0,230,118,.12);border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:10px;color:var(--green);flex-shrink:0}.gl-pl{font-family:var(--fd);font-size:14px;font-weight:700;flex:1}.gl-min{font-family:var(--fd);font-size:11px;font-weight:700;color:var(--t3);background:var(--elevated);padding:2px 7px;border-radius:7px}.ycard,.rcard{width:12px;height:16px;border-radius:2px;flex-shrink:0}.ycard{background:var(--yellow)}.rcard{background:var(--red)}.mi-row{display:flex;justify-content:space-between;align-items:center;padding:9px 0;border-bottom:1px solid var(--border);font-size:13px}.mi-row:last-child{border-bottom:none}.mi-key{color:var(--t3)}.mi-val{font-family:var(--fd);font-size:14px;font-weight:700;text-align:right}.empty-box{color:var(--t3);font-size:13px;padding:8px 0}.ft{background:var(--bg2);border-top:1px solid var(--border);padding:32px 0;margin-top:36px}.ft-brand{font-family:var(--fd);font-size:20px;font-weight:800}.ft-brand span{color:var(--green)}
+@@media(max-width:768px){.hero-grid{gap:10px}.h-logo{width:60px;height:60px}.h-name{font-size:14px}.h-sc{font-size:48px;letter-spacing:-2px}.tl-ev{grid-template-columns:1fr 46px 1fr;gap:5px}.chip{padding:6px 8px;max-width:150px}.ev-pl{font-size:12px}.ev-dt{display:none}.split2{grid-template-columns:1fr}.info-strip{gap:12px}.istrip{font-size:11px}}
+</style>
+}
+
+<nav class="nb">
+  <div class="nb-inner">
+    <a asp-controller="Matches" asp-action="Index" class="brand"><img src="~/images/yilmazleaguelogo.png" asp-append-version="true" alt="YilmazLeague" class="brand-logo" /></a>
+    <div class="nav-links d-none d-lg-flex">
+      <a asp-controller="Matches" asp-action="Index" class="nl">Ana Sayfa</a>
+      <a asp-controller="Matches" asp-action="Detail" asp-route-id="@match.LeagueMatchId" class="nl active">Maç Detayı</a>
+      <a asp-controller="Fixtures" asp-action="Index" class="nl">Fikstür</a>
+      <a asp-controller="Standings" asp-action="Index" class="nl">Puan Durumu</a>
+      @if (Context.Session.GetString("IsAdmin") == "true") { <a asp-controller="Admin" asp-action="Index" class="nl">Admin</a> }
+    </div>
+    <div class="d-flex align-items-center gap-2">
+      <a href="#" class="ico-btn d-none d-sm-flex"><i class="bi bi-search"></i></a>
+      <a href="#" class="ico-btn"><i class="bi bi-person"></i></a>
+      <button class="tog d-lg-none" id="tog" type="button"><i class="bi bi-list"></i></button>
+    </div>
+  </div>
+  <div class="mob-menu" id="mobMenu">
+    <div class="wrap">
+      <a asp-controller="Matches" asp-action="Index" class="nl d-block">Ana Sayfa</a>
+      <a href="#" class="nl d-block active">Maç Detayı</a>
+      <a asp-controller="Fixtures" asp-action="Index" class="nl d-block">Fikstür</a>
+      <a asp-controller="Standings" asp-action="Index" class="nl d-block">Puan Durumu</a>
+      @if (Context.Session.GetString("IsAdmin") == "true") { <a asp-controller="Admin" asp-action="Index" class="nl d-block">Admin</a> }
+    </div>
+  </div>
+</nav>
+
+<section class="hero">
+  <div class="wrap">
+    <div class="hero-badges">
+      <span class="hbadge hb-gold"><i class="bi bi-trophy-fill me-1"></i>La League</span>
+      <span class="hbadge @(isLive ? "hb-live" : "hb-gray")">@if (isLive) { <span class="live-dot"></span><span>CANLI · @(match.LiveMinute ?? 0)'</span> } else { <i class="bi bi-check2-circle me-1"></i><span>@(isCompleted ? "Maç Sona Erdi" : "Maç Planlandı")</span> }</span>
+    </div>
+    <div class="hero-grid">
+      <div class="h-team">
+        <div class="h-logo"><img src="@match.HomeTeamLogo" alt="@match.HomeTeamName" onerror="this.style.display='none'" /></div>
+        <div class="h-name">@match.HomeTeamName</div>
+        <div class="h-type">Ev Sahibi</div>
+      </div>
+      <div class="h-score-c">
+        <div class="h-sc">@(hasDisplayScore ? $"{displayHomeScore}-{displayAwayScore}" : "VS")</div>
+        <div class="h-ft">@(isLive ? $"{match.LiveMinute ?? 0}. dakika" : isCompleted ? "Maç Bitti" : "Planlandı")</div>
+      </div>
+      <div class="h-team">
+        <div class="h-logo"><img src="@match.AwayTeamLogo" alt="@match.AwayTeamName" onerror="this.style.display='none'" /></div>
+        <div class="h-name">@match.AwayTeamName</div>
+        <div class="h-type">Deplasman</div>
+      </div>
+    </div>
+    <div class="info-strip">
+      <div class="istrip"><i class="bi bi-calendar3"></i><span>@match.MatchDate.ToString("dd MMMM yyyy")</span></div>
+      <div class="istrip"><i class="bi bi-clock"></i><span>@match.MatchDate.ToString("HH:mm")</span></div>
+      <div class="istrip"><i class="bi bi-activity"></i><span>@events.Count olay</span></div>
+    </div>
+  </div>
+</section>
+
+<div class="content">
+<div class="wrap">
+  <a asp-controller="Matches" asp-action="Index" class="back-btn"><i class="bi bi-arrow-left"></i> Maç Listesine Dön</a>
+
+  <div class="row g-4">
+    <div class="col-lg-7">
+      <div class="dc">
+        <div class="dc-title"><i class="bi bi-activity me-2" style="color:var(--green)"></i>Maç Olayları</div>
+        @if (!events.Any())
+        {
+          <div class="empty-box">Bu maç için henüz olay girilmedi.</div>
+        }
+        else
+        {
+          <div class="tl-wrap">
+            <div class="tl-line"></div>
+            @foreach (var item in events)
+            {
+                var isHomeEvent = item.TeamId == match.HomeTeamId;
+                var chipSide = isHomeEvent ? "home" : "away";
+                var eventClass = item.EventType == "Gol" ? "goal-ev" : item.EventType == "Sarı Kart" ? "yel-ev" : item.EventType == "Kırmızı Kart" ? "red-ev" : "sub-ev";
+                var iconClass = item.EventType == "Gol" ? "ei-goal" : item.EventType == "Sarı Kart" ? "ei-yel" : item.EventType == "Kırmızı Kart" ? "ei-red" : "ei-sub";
+                var icon = item.EventType == "Gol" ? "bi-circle-fill" : item.EventType == "Oyuncu Değişikliği" ? "bi-arrow-left-right" : "bi-square-fill";
+                var playerText = item.EventType == "Oyuncu Değişikliği" ? $"{item.PlayerInName} ↑" : item.PlayerName;
+                var detailText = item.EventType == "Oyuncu Değişikliği" ? $"{item.PlayerOutName} ↓" : item.Description;
+              <div class="tl-ev">
+                @if (isHomeEvent)
+                {
+                  <div class="tl-home">
+                    <div class="chip @chipSide @eventClass">
+                      <div class="ev-ico @iconClass"><i class="bi @icon"></i></div>
+                      <div><div class="ev-pl">@playerText</div><div class="ev-dt">@detailText</div></div>
+                    </div>
+                  </div>
+                  <div class="tl-min-c"><div class="min-b">@item.Minute'</div></div>
+                  <div class="tl-away"></div>
+                }
+                else
+                {
+                  <div class="tl-home"></div>
+                  <div class="tl-min-c"><div class="min-b">@item.Minute'</div></div>
+                  <div class="tl-away">
+                    <div class="chip @chipSide @eventClass">
+                      <div class="ev-ico @iconClass"><i class="bi @icon"></i></div>
+                      <div><div class="ev-pl">@playerText</div><div class="ev-dt">@detailText</div></div>
+                    </div>
+                  </div>
+                }
+              </div>
+            }
+          </div>
+        }
+      </div>
+
+      <div class="dc">
+        <div class="dc-title"><i class="bi bi-circle-fill me-2" style="color:var(--green);font-size:9px"></i>Goller</div>
+        <div class="split2">
+          <div class="box2">
+            <div class="box2-title">@match.HomeTeamName</div>
+            @foreach (var goal in goals.Where(x => x.TeamId == match.HomeTeamId))
+            {
+              <div class="gl"><div class="gl-ico"><i class="bi bi-circle-fill" style="font-size:8px"></i></div><div class="gl-pl">@goal.PlayerName</div><div class="gl-min">@goal.Minute'</div></div>
+            }
+            @if (!goals.Any(x => x.TeamId == match.HomeTeamId)) { <div class="empty-box">Gol yok</div> }
+          </div>
+          <div class="box2">
+            <div class="box2-title">@match.AwayTeamName</div>
+            @foreach (var goal in goals.Where(x => x.TeamId == match.AwayTeamId))
+            {
+              <div class="gl"><div class="gl-ico"><i class="bi bi-circle-fill" style="font-size:8px"></i></div><div class="gl-pl">@goal.PlayerName</div><div class="gl-min">@goal.Minute'</div></div>
+            }
+            @if (!goals.Any(x => x.TeamId == match.AwayTeamId)) { <div class="empty-box">Gol yok</div> }
+          </div>
+        </div>
+      </div>
+
+      <div class="dc">
+        <div class="dc-title"><i class="bi bi-square-fill me-2" style="color:var(--yellow);font-size:10px"></i>Kartlar</div>
+        @if (!cards.Any())
+        {
+          <div class="empty-box">Kart yok</div>
+        }
+        else
+        {
+          @foreach (var card in cards)
+          {
+            <div class="gl"><div class="@(card.EventType == "Kırmızı Kart" ? "rcard" : "ycard")"></div><div class="gl-pl">@card.PlayerName - @card.TeamName</div><div class="gl-min">@card.Minute'</div></div>
+          }
+        }
+      </div>
+    </div>
+
+    <div class="col-lg-5">
+      <div class="dc">
+        <div class="dc-title"><i class="bi bi-bar-chart-fill me-2" style="color:var(--blue)"></i>Maç Özeti</div>
+        <div class="mi-row"><span class="mi-key">Durum</span><span class="mi-val">@(isLive ? $"Canlı - {match.LiveMinute ?? 0}. dakika" : match.Status)</span></div>
+        <div class="mi-row"><span class="mi-key">Skor</span><span class="mi-val">@(hasDisplayScore ? $"{displayHomeScore}-{displayAwayScore}" : "Henüz skor yok")</span></div>
+        <div class="mi-row"><span class="mi-key">Olay Sayısı</span><span class="mi-val">@events.Count</span></div>
+        <div class="mi-row"><span class="mi-key">Gol</span><span class="mi-val">@goals.Count</span></div>
+        <div class="mi-row"><span class="mi-key">Kart</span><span class="mi-val">@cards.Count</span></div>
+        <div class="mi-row"><span class="mi-key">Değişiklik</span><span class="mi-val">@substitutions.Count</span></div>
+      </div>
+
+      <div class="dc">
+        <div class="dc-title"><i class="bi bi-info-circle me-2"></i>Maç Bilgileri</div>
+        <div class="mi-row"><span class="mi-key">Ev Sahibi</span><span class="mi-val">@match.HomeTeamName</span></div>
+        <div class="mi-row"><span class="mi-key">Deplasman</span><span class="mi-val">@match.AwayTeamName</span></div>
+        <div class="mi-row"><span class="mi-key">Tarih</span><span class="mi-val">@match.MatchDate.ToString("dd.MM.yyyy")</span></div>
+        <div class="mi-row"><span class="mi-key">Saat</span><span class="mi-val">@match.MatchDate.ToString("HH:mm")</span></div>
+      </div>
+    </div>
+  </div>
+</div>
+</div>
+
+<footer class="ft">
+  <div class="wrap">
+    <div class="ft-brand">Yilmaz<span>League</span></div>
+  </div>
+</footer>
+
+@section Scripts {
+<script>
+const tog = document.getElementById('tog');
+const mob = document.getElementById('mobMenu');
+if (tog && mob) {
+  tog.addEventListener('click', () => {
+    mob.classList.toggle('open');
+    tog.innerHTML = mob.classList.contains('open') ? '<i class="bi bi-x-lg"></i>' : '<i class="bi bi-list"></i>';
+  });
+}
+</script>
+}
+
+
+
