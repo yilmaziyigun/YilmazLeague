@@ -65,12 +65,9 @@ YilmazLeague
 │
 ├── YilmazLeague.WebApi
 │   └── API controllerları
-│
-├── YilmazLeague.WebUI
-│   └── MVC kullanıcı arayüzü
-│
-└── SeedData
-    └── Örnek veri dosyaları
+│ 
+└── YilmazLeague.WebUI
+    └── MVC kullanıcı arayüzü
 ```
 
 ---
