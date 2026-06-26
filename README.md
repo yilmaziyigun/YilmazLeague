@@ -19,8 +19,6 @@ Bu projenin amacı, bir futbol ligi yönetim sisteminin temel işleyişini oluş
 
 Sistem üzerinden:
 
-- Takımlar görüntülenebilir.
-- Oyuncular görüntülenebilir.
 - Sezonlara göre maçlar listelenebilir.
 - Haftalık fikstür takip edilebilir.
 - Canlı maçlar görüntülenebilir.
@@ -34,13 +32,11 @@ Sistem üzerinden:
 ## 🛠 Kullanılan Teknolojiler
 
 - ASP.NET Core 6.0
-- ASP.NET Core Web API
 - ASP.NET Core MVC
 - Entity Framework Core
 - SQL Server
 - Swagger
 - Bootstrap
-- Bootstrap Icons
 - HTML
 - CSS
 - JavaScript
@@ -102,7 +98,7 @@ Başlıca controllerlar:
 - `StandingsController`
 - `StatisticsController`
 
-API üzerinden yapılabilen işlemler:
+Database üzerinden yapılabilen işlemler:
 
 - Takımları listeleme
 - Oyuncuları listeleme
